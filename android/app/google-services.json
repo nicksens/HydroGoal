@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158282769486",
+    "project_id": "hydrogoal",
+    "storage_bucket": "hydrogoal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158282769486:android:ae086e78177173d895cf1f",
+        "android_client_info": {
+          "package_name": "com.example.hydrogoal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdVE_snnrV22vx9deixS183H-aSjDST9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
