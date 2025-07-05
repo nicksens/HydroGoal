@@ -146,10 +146,31 @@ class _TodayScreenState extends State<TodayScreen> {
                     onPressed: () => Navigator.of(ctx).pop()),
                 ElevatedButton(
                     child: const Text('Save'),
-                    onPressed: () {
+                // vvvvvv THE CHANGES ARE HERE vvvvvv
+                onPressed: () async { // 1. Make the function async
+                  // 2. Request permissions first
+                  final bool permissionsGranted =
+                      await _notificationService.requestPermissions();
+
+                  // 3. Check if the user granted permissions
+                  if (permissionsGranted) {
+                    // If yes, schedule the notifications and close the dialog
                       _toggleReminders(tempInterval, tempRemindersActive);
-                      Navigator.of(ctx).pop();
-                    }),
+                    if (mounted) Navigator.of(ctx).pop();
+                  } else {
+                    // If no, show a message and don't close the dialog
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Permissions are required to set reminders.'),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                    }
+                  }
+                },
+                // ^^^^^^ END OF CHANGES ^^^^^^
+              ),
               ],
             );
           },
