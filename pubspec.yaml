@@ -27,10 +27,18 @@ dependencies:
 
   # For picking images (Hydration Proof)
   image_picker: ^1.1.2
+  camera: ^0.11.0          # For the desktop live preview
+  camera_windows: ^0.2.1+1 # For Windows support
 
   # UI and Utility Packages
   table_calendar: ^3.1.1
   intl: ^0.19.0
+
+  #For AI
+  google_generative_ai: ^0.4.3
+  flutter_dotenv: ^5.1.0
+
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -42,3 +50,5 @@ dev_dependencies:
 flutter:
   # This is the correct location for this line.
   uses-material-design: true
+  assets:
+    - .env

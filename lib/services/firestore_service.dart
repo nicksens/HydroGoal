@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hydrogoal/models/bottle_model.dart';
 import 'package:hydrogoal/models/user_model.dart';
 import 'package:intl/intl.dart';
 
@@ -89,4 +90,31 @@ class FirestoreService {
         .snapshots();
   }
 
+  Future<void> addBottle(String userId, String name, int capacity) async {
+    await _db.collection('users').doc(userId).collection('bottles').add({
+      'name': name,
+      'capacity': capacity,
+    });
+  }
+
+  /// Gets a real-time stream of the user's saved bottles.
+  Stream<List<Bottle>> getBottles(String userId) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('bottles')
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Bottle.fromSnapshot(doc)).toList());
+  }
+
+  /// Deletes a bottle from the user's inventory.
+  Future<void> deleteBottle(String userId, String bottleId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('bottles')
+        .doc(bottleId)
+        .delete();
+  }
 }
