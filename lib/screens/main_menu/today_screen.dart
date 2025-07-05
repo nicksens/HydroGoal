@@ -105,47 +105,48 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   void _showReminderSettingsDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        int tempInterval = _reminderInterval;
-        bool tempRemindersActive = _remindersActive;
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Reminder Settings'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DropdownButtonFormField<int>(
-                    value: tempInterval,
-                    items: const [
-                      DropdownMenuItem(value: 1, child: Text('1 minute')),
-                      DropdownMenuItem(value: 5, child: Text('5 minutes')),
-                      DropdownMenuItem(value: 30, child: Text('30 minutes')),
-                      DropdownMenuItem(value: 60, child: Text('1 hour')),
-                      DropdownMenuItem(value: 90, child: Text('1.5 hours')),
-                      DropdownMenuItem(value: 120, child: Text('2 hours')),
-                    ],
-                    onChanged: (value) =>
-                        setDialogState(() => tempInterval = value ?? 60),
-                    decoration: const InputDecoration(labelText: 'Interval'),
-                  ),
-                  SwitchListTile(
-                    title: const Text('Enable Reminders'),
-                    value: tempRemindersActive,
-                    onChanged: (value) =>
-                        setDialogState(() => tempRemindersActive = value),
-                    activeColor: AppColors.primaryBlue,
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                    child: const Text('Cancel'),
-                    onPressed: () => Navigator.of(ctx).pop()),
-                ElevatedButton(
-                    child: const Text('Save'),
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      int tempInterval = _reminderInterval;
+      bool tempRemindersActive = _remindersActive;
+      return StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: const Text('Reminder Settings'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<int>(
+                  value: tempInterval,
+                  items: const [
+                    // I see you added 1 and 5 minutes, that's great for testing!
+                    DropdownMenuItem(value: 1, child: Text('1 minute')),
+                    DropdownMenuItem(value: 5, child: Text('5 minutes')),
+                    DropdownMenuItem(value: 30, child: Text('30 minutes')),
+                    DropdownMenuItem(value: 60, child: Text('1 hour')),
+                    DropdownMenuItem(value: 90, child: Text('1.5 hours')),
+                    DropdownMenuItem(value: 120, child: Text('2 hours')),
+                  ],
+                  onChanged: (value) =>
+                      setDialogState(() => tempInterval = value ?? 60),
+                  decoration: const InputDecoration(labelText: 'Interval'),
+                ),
+                SwitchListTile(
+                  title: const Text('Enable Reminders'),
+                  value: tempRemindersActive,
+                  onChanged: (value) =>
+                      setDialogState(() => tempRemindersActive = value),
+                  activeColor: AppColors.primaryBlue,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(ctx).pop()),
+              ElevatedButton(
+                child: const Text('Save'),
                 // vvvvvv THE CHANGES ARE HERE vvvvvv
                 onPressed: () async { // 1. Make the function async
                   // 2. Request permissions first
@@ -155,7 +156,7 @@ class _TodayScreenState extends State<TodayScreen> {
                   // 3. Check if the user granted permissions
                   if (permissionsGranted) {
                     // If yes, schedule the notifications and close the dialog
-                      _toggleReminders(tempInterval, tempRemindersActive);
+                    _toggleReminders(tempInterval, tempRemindersActive);
                     if (mounted) Navigator.of(ctx).pop();
                   } else {
                     // If no, show a message and don't close the dialog
@@ -171,13 +172,13 @@ class _TodayScreenState extends State<TodayScreen> {
                 },
                 // ^^^^^^ END OF CHANGES ^^^^^^
               ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
   void _showSettingsBottomSheet() {
     showModalBottomSheet(
@@ -231,6 +232,9 @@ class _TodayScreenState extends State<TodayScreen> {
       await _notificationService.cancelAllNotifications();
     }
     await _updateReminderSettings(interval, start);
+    final pendingRequests = await _notificationService.getPendingNotifications();
+    debugPrint('DEBUG: Found ${pendingRequests.length} pending notification requests.');
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hydrogoal/main.dart'; // Import main.dart to get the navigatorKey
+import 'package:hydrogoal/screens/main_menu/today_screen.dart'; // Import the screen we want to open
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -41,8 +45,15 @@ class NotificationService {
     }
   }
 
+  // --- THIS IS THE KEY FUNCTION FOR REDIRECTION ---
   void _onNotificationTapped(NotificationResponse response) {
-    print('Notification tapped: ${response.payload}');
+    debugPrint('Notification tapped with payload: ${response.payload}');
+    // Use the global navigatorKey from main.dart to navigate
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState!.push(
+        MaterialPageRoute(builder: (context) => const TodayScreen()),
+      );
+    }
   }
 
   Future<bool> requestPermissions() async {
