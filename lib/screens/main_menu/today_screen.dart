@@ -1,52 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hydrogoal/screens/auth/auth_wrapper.dart';
-import 'package:hydrogoal/screens/hydration/hydration_proof_screen.dart'; // Import the new screen
+import 'package:hydrogoal/screens/hydration/hydration_proof_screen.dart';
 import 'package:hydrogoal/services/firebase_auth_service.dart';
+import 'package:hydrogoal/services/firestore_service.dart';
 import 'package:hydrogoal/services/notification_service.dart';
 import 'package:hydrogoal/utils/colors.dart';
+import 'package:hydrogoal/widgets/wave_clipper.dart'; // <-- Import the new clipper
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// You can move this clipper to its own file in `lib/widgets` to avoid repetition
-class WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 50);
-    var firstControlPoint = Offset(size.width / 4, size.height);
-    var firstEndPoint = Offset(size.width / 2, size.height - 50);
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    var secondControlPoint = Offset(size.width * 3 / 4, size.height - 100);
-    var secondEndPoint = Offset(size.width, size.height - 50);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
+class TodayScreen extends StatefulWidget {
+  const TodayScreen({super.key});
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  State<TodayScreen> createState() => _TodayScreenState();
 }
 
-class MainMenuScreen extends StatefulWidget {
-  const MainMenuScreen({super.key});
-
-  @override
-  State<MainMenuScreen> createState() => _MainMenuScreenState();
-}
-
-class _MainMenuScreenState extends State<MainMenuScreen> {
-  // --- State Variables ---
+class _TodayScreenState extends State<TodayScreen> {
   int _goal = 2000;
   int _currentIntake = 0;
   int _reminderInterval = 60;
   bool _remindersActive = false;
 
   final NotificationService _notificationService = NotificationService();
+  final FirestoreService _firestoreService = FirestoreService();
   final TextEditingController _goalInputController = TextEditingController();
+  final String? _userId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
@@ -55,20 +36,22 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     _notificationService.initialize();
   }
 
-  // --- Data Persistence ---
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _goal = prefs.getInt('goal') ?? 2000;
-      _currentIntake = prefs.getInt('intake') ?? 0;
-      _reminderInterval = prefs.getInt('reminderInterval') ?? 60;
-      _remindersActive = prefs.getBool('remindersActive') ?? false;
-    });
-  }
+    _goal = prefs.getInt('goal') ?? 2000;
+    _reminderInterval = prefs.getInt('reminderInterval') ?? 60;
+    _remindersActive = prefs.getBool('remindersActive') ?? false;
 
-  Future<void> _saveIntake() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('intake', _currentIntake);
+    if (_userId != null) {
+      final todayIntake = await _firestoreService.getTodaysIntake(_userId!);
+      if (mounted) {
+        setState(() {
+          _currentIntake = todayIntake;
+        });
+      }
+    } else {
+      if (mounted) setState(() {});
+    }
   }
 
   Future<void> _updateGoal(int newGoal) async {
@@ -87,9 +70,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     });
   }
 
-  // --- Dialogs and Bottom Sheets ---
-
-  // This function is now called from the settings bottom sheet
   void _showGoalSettingsDialog() {
     _goalInputController.text = _goal.toString();
     showDialog(
@@ -120,16 +100,12 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     );
   }
 
-  // This function is also called from the settings bottom sheet
   void _showReminderSettingsDialog() {
-    // Using a StatefulBuilder to manage the dialog's internal state
     showDialog(
       context: context,
       builder: (ctx) {
-        // Temporary variables to hold changes within the dialog
         int tempInterval = _reminderInterval;
         bool tempRemindersActive = _remindersActive;
-
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
@@ -208,9 +184,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     );
   }
 
-  // --- Main Actions ---
-
-  // Updated toggle reminders logic
   Future<void> _toggleReminders(int interval, bool start) async {
     if (start) {
       await _notificationService.scheduleRepeatingNotification(
@@ -230,17 +203,16 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     }
   }
 
-  // This function now launches the HydrationProofScreen and waits for a result
   Future<void> _logWaterWithProof() async {
+    if (_userId == null) return;
     final amount = await Navigator.of(context).push<int>(
       MaterialPageRoute(builder: (context) => const HydrationProofScreen()),
     );
-
     if (amount != null && amount > 0) {
+      await _firestoreService.logWaterIntake(_userId!, amount);
       setState(() {
         _currentIntake += amount;
       });
-      _saveIntake();
     }
   }
 
@@ -254,6 +226,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   Widget build(BuildContext context) {
     final authService = FirebaseAuthService();
     final double percent = _goal > 0 ? (_currentIntake / _goal) : 0;
+    final int remaining =
+        _goal - _currentIntake > 0 ? _goal - _currentIntake : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -336,8 +310,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                       children: [
                         _buildStatColumn('Current', '${_currentIntake} ml'),
                         _buildStatColumn('Goal', '${_goal} ml'),
-                        _buildStatColumn('Remaining',
-                            '${_goal - _currentIntake > 0 ? _goal - _currentIntake : 0} ml'),
+                        _buildStatColumn('Remaining', '${remaining} ml'),
                       ],
                     ),
                   ),
@@ -349,9 +322,9 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _logWaterWithProof, // Updated to call the new function
+        onPressed: _logWaterWithProof,
         icon: const Icon(Icons.camera_alt_outlined),
-        label: const Text('Start Hydrating'),
+        label: const Text('Add Proof'),
         backgroundColor: AppColors.primaryBlue,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

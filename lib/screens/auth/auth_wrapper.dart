@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hydrogoal/screens/main_menu/main_menu_screen.dart';
+import 'package:hydrogoal/screens/home_screen.dart';
+import 'package:hydrogoal/screens/main_menu/today_screen.dart';
 import 'package:hydrogoal/screens/onboarding/onboarding_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -20,7 +21,7 @@ class AuthWrapper extends StatelessWidget {
 
         // If snapshot has data, it means the user is logged in
         if (snapshot.hasData) {
-          return const MainMenuScreen();
+          return const HomeScreen();
         }
 
         // If no data, the user is logged out, so show the onboarding screen

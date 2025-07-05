@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrogoal/models/user_model.dart';
 import 'package:hydrogoal/services/firebase_auth_service.dart';
 import 'package:hydrogoal/services/firestore_service.dart';
-import 'package:hydrogoal/screens/main_menu/main_menu_screen.dart';
+import 'package:hydrogoal/screens/home_screen.dart';
 import 'package:hydrogoal/screens/auth/login_screen.dart';
 import 'package:hydrogoal/utils/colors.dart'; // Import your colors
 
@@ -52,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await _firestoreService.createUser(newUser);
         if (mounted)
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const MainMenuScreen()));
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
       }
     } on FirebaseAuthException catch (e) {
       String message;

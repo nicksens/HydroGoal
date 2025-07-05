@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrogoal/services/firebase_auth_service.dart';
-import 'package:hydrogoal/screens/main_menu/main_menu_screen.dart';
+import 'package:hydrogoal/screens/main_menu/today_screen.dart';
 import 'package:hydrogoal/screens/auth/signup_screen.dart';
 import 'package:hydrogoal/utils/colors.dart'; // Import your colors
 
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text.trim(), _passwordController.text.trim());
       if (user != null && mounted) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainMenuScreen()));
+            MaterialPageRoute(builder: (context) => const TodayScreen()));
       }
     } on FirebaseAuthException catch (e) {
       String message;
