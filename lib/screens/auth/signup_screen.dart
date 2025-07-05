@@ -5,7 +5,8 @@ import 'package:hydrogoal/services/firebase_auth_service.dart';
 import 'package:hydrogoal/services/firestore_service.dart';
 import 'package:hydrogoal/screens/home_screen.dart';
 import 'package:hydrogoal/screens/auth/login_screen.dart';
-import 'package:hydrogoal/utils/colors.dart'; // Import your colors
+import 'package:hydrogoal/utils/colors.dart';
+import 'package:hydrogoal/widgets/wave_clipper.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -61,18 +62,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           message = 'An account already exists for that email.';
           break;
         case 'weak-password':
-          message = 'Password must be at least 6 characters long.';
-          break;
-        case 'invalid-email':
-          message = 'The email address is not valid.';
+          message = 'Password must be at least 6 characters.';
           break;
         default:
-          message = 'An unexpected error occurred. Please try again.';
+          message = 'An unexpected error occurred.';
       }
       setState(() => _errorMessage = message);
     } catch (e) {
-      setState(() => _errorMessage =
-          'An unexpected error occurred. Please check your internet connection.');
+      setState(() => _errorMessage = 'An unexpected error occurred.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -83,7 +80,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Wave
           ClipPath(
             clipper: WaveClipper(),
             child: Container(
@@ -135,6 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty)
                             return 'Please enter an email';
+                          // This is the corrected regular expression
                           if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value))
                             return 'Please enter a valid email address';
                           return null;
@@ -205,27 +202,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-}
-
-// CustomClipper for the wave effect
-class WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 50);
-    var firstControlPoint = Offset(size.width / 4, size.height);
-    var firstEndPoint = Offset(size.width / 2, size.height - 50);
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    var secondControlPoint = Offset(size.width * 3 / 4, size.height - 100);
-    var secondEndPoint = Offset(size.width, size.height - 50);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
