@@ -5,6 +5,7 @@ import 'package:hydrogoal/services/firebase_auth_service.dart';
 import 'package:hydrogoal/services/firestore_service.dart';
 import 'package:hydrogoal/screens/main_menu/main_menu_screen.dart';
 import 'package:hydrogoal/screens/auth/login_screen.dart';
+import 'package:hydrogoal/utils/colors.dart'; // Import your colors
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,12 +15,17 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _authService = FirebaseAuthService();
   final _firestoreService = FirestoreService();
+
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
   bool _isLoading = false;
+  String? _errorMessage;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -29,65 +35,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  // Helper function to show error dialogs
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('Sign Up Failed'),
-            content: Text(message),
-            actions: [
-              TextButton(
-                child: const Text('Okay'),
-                onPressed: () => Navigator.of(ctx).pop(),
-              ),
-            ],
-          ),
-    );
-  }
-
   Future<void> _signUp() async {
-    if (_usernameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
-      _showErrorDialog("Please fill in all fields.");
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
+    if (!_formKey.currentState!.validate()) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     try {
       User? user = await _authService.signUpWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
+          _emailController.text.trim(), _passwordController.text.trim());
       if (user != null) {
-        // Create user document in Firestore
         AppUser newUser = AppUser(
-          uid: user.uid,
-          username: _usernameController.text.trim(),
-          email: user.email!,
-        );
+            uid: user.uid,
+            username: _usernameController.text.trim(),
+            email: user.email!);
         await _firestoreService.createUser(newUser);
-
-        // Navigate to the Main Menu
-        if (mounted) {
+        if (mounted)
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainMenuScreen()),
-          );
-        }
+              MaterialPageRoute(builder: (context) => const MainMenuScreen()));
       }
     } on FirebaseAuthException catch (e) {
-      // Handle specific Firebase errors
       String message;
       switch (e.code) {
         case 'email-already-in-use':
           message = 'An account already exists for that email.';
           break;
         case 'weak-password':
-          message = 'The password provided is too weak.';
+          message = 'Password must be at least 6 characters long.';
           break;
         case 'invalid-email':
           message = 'The email address is not valid.';
@@ -95,92 +69,163 @@ class _SignUpScreenState extends State<SignUpScreen> {
         default:
           message = 'An unexpected error occurred. Please try again.';
       }
-      _showErrorDialog(message);
+      setState(() => _errorMessage = message);
     } catch (e) {
-      // Handle any other unexpected errors
-      _showErrorDialog('An unexpected error occurred. Please try again.');
+      setState(() => _errorMessage =
+          'An unexpected error occurred. Please check your internet connection.');
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // The UI part remains the same
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 60),
-              const Text(
-                'Create Account',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Start your hydration journey with HydroGoal.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 30),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                    onPressed: _signUp,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text('SIGN UP'),
-                  ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Already have an account?'),
-                  TextButton(
-                    onPressed:
-                        () => Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
+      body: Stack(
+        children: [
+          // Background Wave
+          ClipPath(
+            clipper: WaveClipper(),
+            child: Container(
+              height: 250,
+              color: AppColors.primaryBlue.withOpacity(0.2),
+            ),
+          ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Icon(Icons.water_drop_outlined,
+                          size: 60, color: AppColors.primaryBlue),
+                      const SizedBox(height: 20),
+                      const Text('Create Account',
+                          style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.darkText),
+                          textAlign: TextAlign.center),
+                      const Text('Start your hydration journey',
+                          style: TextStyle(
+                              fontSize: 16, color: AppColors.lightText),
+                          textAlign: TextAlign.center),
+                      const SizedBox(height: 40),
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: const InputDecoration(
+                            labelText: 'Username',
+                            prefixIcon: Icon(Icons.person_outline)),
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? 'Please enter a username'
+                            : null,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon: Icon(Icons.email_outlined)),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Please enter an email';
+                          if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value))
+                            return 'Please enter a valid email address';
+                          return null;
+                        },
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: !_isPasswordVisible,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(_isPasswordVisible
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined),
+                            onPressed: () => setState(
+                                () => _isPasswordVisible = !_isPasswordVisible),
                           ),
                         ),
-                    child: const Text('Log In'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Please enter a password';
+                          if (value.length < 6)
+                            return 'Password must be at least 6 characters';
+                          return null;
+                        },
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _signUp(),
+                      ),
+                      const SizedBox(height: 20),
+                      if (_errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Text(_errorMessage!,
+                              style: const TextStyle(
+                                  color: AppColors.errorRed, fontSize: 14),
+                              textAlign: TextAlign.center),
+                        ),
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ElevatedButton(
+                              onPressed: _signUp, child: const Text('SIGN UP')),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Already have an account?",
+                              style: TextStyle(color: AppColors.lightText)),
+                          TextButton(
+                            onPressed: () => Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                                    builder: (context) => const LoginScreen())),
+                            child: const Text('Log In',
+                                style: TextStyle(
+                                    color: AppColors.primaryBlue,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
+
+// CustomClipper for the wave effect
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 50);
+    var firstControlPoint = Offset(size.width / 4, size.height);
+    var firstEndPoint = Offset(size.width / 2, size.height - 50);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
+        firstEndPoint.dx, firstEndPoint.dy);
+    var secondControlPoint = Offset(size.width * 3 / 4, size.height - 100);
+    var secondEndPoint = Offset(size.width, size.height - 50);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
+        secondEndPoint.dx, secondEndPoint.dy);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

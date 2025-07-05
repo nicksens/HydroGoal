@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hydrogoal/decision_screen.dart'; // <-- This import is crucial
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'package:hydrogoal/screens/auth/auth_wrapper.dart';
+import 'package:hydrogoal/utils/colors.dart'; // Import your new colors
 import 'firebase_options.dart';
 
 void main() async {
-  // Ensures that Flutter's widget binding is initialized before anything else
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initializes Firebase services for your app
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -21,12 +21,40 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HydroGoal',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        // Set the default font for the entire app
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        // Use your defined colors
+        scaffoldBackgroundColor: AppColors.background,
+        primaryColor: AppColors.primaryBlue,
+        // Style elevated buttons
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryBlue,
+            foregroundColor: AppColors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        // Style text form fields
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          labelStyle: const TextStyle(color: AppColors.lightText),
+        ),
       ),
-      // This line needs the import above to work
-      home: const DecisionScreen(),
+      home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
     );
   }
