@@ -137,9 +137,11 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
 
-### 👥 Support
+### 👥 Creator
 
-If you have any questions or need further assistance, feel free to reach out via [your contact method here].
+If you have any questions or need further assistance, feel free to reach out to:
+- Hernicksen Satria (hernicksen.satria@binus.ac.id)
+- Lawryan Andrew Darisang (lawryan.darisang@binus.ac.id)
 
 ---
 
