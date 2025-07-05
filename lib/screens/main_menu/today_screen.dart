@@ -81,27 +81,32 @@ class _TodayScreenState extends State<TodayScreen> {
 
   // --- Logic ---
   void _calculateRecommendedGoal() {
-    // UPDATED: More balanced formula
-    // Start with a base multiplier for weight.
-    double base = _weight * 30;
+    // 1. Determine base multiplier based on gender
+    final double weightMultiplier = (_gender == 'male') ? 35 : 31;
 
-    // Adjust for age (e.g., slightly less needed for older adults)
+    // 2. Calculate base intake from weight and gender
+    double weightBasedIntake = _weight * weightMultiplier;
 
+    // 3. Adjust for age
+    double ageMultiplier;
     if (_age < 30) {
-      base = 1.0;
+      ageMultiplier = 1.0; // No adjustment
     } else if (_age <= 55) {
-      base = 0.9;
+      ageMultiplier = 0.95; // 5% less
     } else {
-      base = 0.8;
+      ageMultiplier = 0.90; // 10% less
     }
+    double ageAdjustedIntake = weightBasedIntake * ageMultiplier;
 
-    // Add amounts for activity and climate
+    // 4. Add bonuses for activity and climate
     double activityBonus = (_activityLevel - 1) * 250;
     double climateBonus = (_climateLevel - 1) * 200;
 
-    double calculatedGoal = base + activityBonus + climateBonus;
+    // 5. Calculate the final goal
+    double calculatedGoal = ageAdjustedIntake + activityBonus + climateBonus;
 
     setState(() {
+      // Round to the nearest 50ml
       _recommendedGoal = (calculatedGoal / 50).round() * 50;
     });
   }
@@ -422,6 +427,7 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   // UPDATED: Gender selector with smaller spacing to fix overflow
+  // UPDATED: Gender selector with Flexible widget to prevent overflow
   Widget _buildGenderSelector() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -435,12 +441,14 @@ class _TodayScreenState extends State<TodayScreen> {
             children: [
               Expanded(
                 child: ChoiceChip(
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                   label: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.male, size: 20),
-                        SizedBox(width: 4),
-                        Text('Male')
+                        SizedBox(width: 8),
+                        // Flexible allows the text to wrap if needed
+                        Flexible(child: Text('Male')),
                       ]),
                   selected: _gender == 'male',
                   onSelected: (selected) {
@@ -450,17 +458,22 @@ class _TodayScreenState extends State<TodayScreen> {
                       _saveUserSettings();
                     }
                   },
+                  selectedColor: AppColors.primaryBlue.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ChoiceChip(
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                   label: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.female, size: 20),
-                        SizedBox(width: 4),
-                        Text('Female')
+                        SizedBox(width: 8),
+                        // Flexible allows the text to wrap if needed
+                        Flexible(child: Text('Female')),
                       ]),
                   selected: _gender == 'female',
                   onSelected: (selected) {
@@ -470,6 +483,9 @@ class _TodayScreenState extends State<TodayScreen> {
                       _saveUserSettings();
                     }
                   },
+                  selectedColor: AppColors.primaryBlue.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ],
