@@ -47,18 +47,24 @@ class NotificationService {
 
   Future<bool> requestPermissions() async {
     try {
-      // For Android 13+ we need to request notification permission
       final androidImplementation =
           _notifications.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidImplementation != null) {
-        final granted =
+        // Request the standard notification permission first
+        final bool? standardPermission =
             await androidImplementation.requestNotificationsPermission();
-        return granted ?? true;
+
+        // Then, request the exact alarm permission
+        final bool? exactAlarmPermission =
+            await androidImplementation.requestExactAlarmsPermission();
+
+        return (standardPermission ?? false) && (exactAlarmPermission ?? false);
       }
 
-      return true; // For iOS and older Android versions
+      // For iOS, just return true as permissions are handled differently
+      return true;
     } catch (e) {
       print('Error requesting permissions: $e');
       return false;

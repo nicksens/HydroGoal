@@ -120,6 +120,8 @@ class _TodayScreenState extends State<TodayScreen> {
                   DropdownButtonFormField<int>(
                     value: tempInterval,
                     items: const [
+                      DropdownMenuItem(value: 1, child: Text('1 minute')),
+                      DropdownMenuItem(value: 5, child: Text('5 minutes')),
                       DropdownMenuItem(value: 30, child: Text('30 minutes')),
                       DropdownMenuItem(value: 60, child: Text('1 hour')),
                       DropdownMenuItem(value: 90, child: Text('1.5 hours')),
@@ -190,6 +192,16 @@ class _TodayScreenState extends State<TodayScreen> {
 
   Future<void> _toggleReminders(int interval, bool start) async {
     if (start) {
+      final bool hasPermission =
+          await _notificationService.requestPermissions();
+      if (!hasPermission && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Permissions are required to set reminders.')),
+        );
+        return; // Stop if permissions are not granted
+      }
+
       await _notificationService.scheduleRepeatingNotification(
           intervalMinutes: interval,
           title: '💧 Time to Hydrate!',
@@ -238,134 +250,136 @@ class _TodayScreenState extends State<TodayScreen> {
 
   // In lib/screens/main_menu/today_screen.dart
 
-@override
-Widget build(BuildContext context) {
-  // This part remains the same
-  final double percent = _goal > 0 ? (_currentIntake / _goal) : 0;
-  final int remaining =
-      _goal - _currentIntake > 0 ? _goal - _currentIntake : 0;
+  @override
+  Widget build(BuildContext context) {
+    // This part remains the same
+    final double percent = _goal > 0 ? (_currentIntake / _goal) : 0;
+    final int remaining =
+        _goal - _currentIntake > 0 ? _goal - _currentIntake : 0;
 
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      title: const Text('Today',
-          style: TextStyle(
-              color: AppColors.darkText,
-              fontWeight: FontWeight.bold,
-              fontSize: 28)),
-      actions: [
-        IconButton(
-          icon:
-              const Icon(Icons.settings_outlined, color: AppColors.darkText),
-          onPressed: _showSettingsBottomSheet,
-        ),
-        IconButton(
-          icon: const Icon(Icons.account_circle_outlined, color: AppColors.darkText),
-          tooltip: 'Profile',
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          },
-        ),
-      ],
-    ),
-    // The FloatingActionButton is removed, as requested.
-    body: SingleChildScrollView( // <-- FIX for the overflow error
-      child: Stack(
-        children: [
-          ClipPath(
-            clipper: WaveClipper(),
-            child: Container(
-              height: 250,
-              color: AppColors.lightBlue.withOpacity(0.3),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Today',
+            style: TextStyle(
+                color: AppColors.darkText,
+                fontWeight: FontWeight.bold,
+                fontSize: 28)),
+        actions: [
+          IconButton(
+            icon:
+                const Icon(Icons.settings_outlined, color: AppColors.darkText),
+            onPressed: _showSettingsBottomSheet,
           ),
-          // We use Padding to ensure content isn't under the phone's status bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: Column(
-              children: [
-                // We use SizedBox for predictable spacing instead of Spacers
-                const SizedBox(height: 20),
-                CircularPercentIndicator(
-                  radius: 125.0,
-                  lineWidth: 24.0,
-                  percent: percent > 1.0 ? 1.0 : percent,
-                  center: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.water_drop,
-                        size: 40, color: AppColors.primaryBlue),
-                      const SizedBox(height: 8),
-                      Text('${_currentIntake}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                            fontSize: 48,
-                            color: AppColors.darkText)),
-                      Text('/ ${_goal} ml',
-                        style: const TextStyle(
-                          fontSize: 16, color: AppColors.lightText)),
-
-                    ],
-                  ),
-                  circularStrokeCap: CircularStrokeCap.round,
-                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                  progressColor: AppColors.primaryBlue,
-                  animation: true,
-                ),
-                const SizedBox(height: 40),
-
-                // 1. The Stats Card
-                Card(
-                  elevation: 2,
-                  shadowColor: AppColors.primaryBlue.withOpacity(0.2),
-                  // The Card's margin is now handled by the parent Padding
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatColumn('Current', '${_currentIntake} ml'),
-                        _buildStatColumn('Goal', '${_goal} ml'),
-                        _buildStatColumn('Remaining', '${remaining} ml'),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // 2. The Bottle Selector (caravan)
-                _buildBottleSelector(),
-
-                const SizedBox(height: 24),
-
-                // 3. The "Add Proof" button with natural size
-                ElevatedButton.icon(
-                  onPressed: _logWaterWithProof,
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text('Add Proof'),
-                  style: ElevatedButton.styleFrom(
-                    // You can adjust padding to make it look just right
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    )
-                  ),
-                ),
-                const SizedBox(height: 40), // Extra space at the bottom
-              ],
-            ),
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined,
+                color: AppColors.darkText),
+            tooltip: 'Profile',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
           ),
         ],
       ),
-    ),
-  );
-}
+      // The FloatingActionButton is removed, as requested.
+      body: SingleChildScrollView(
+        // <-- FIX for the overflow error
+        child: Stack(
+          children: [
+            ClipPath(
+              clipper: WaveClipper(),
+              child: Container(
+                height: 250,
+                color: AppColors.lightBlue.withOpacity(0.3),
+              ),
+            ),
+            // We use Padding to ensure content isn't under the phone's status bar
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: Column(
+                children: [
+                  // We use SizedBox for predictable spacing instead of Spacers
+                  const SizedBox(height: 20),
+                  CircularPercentIndicator(
+                    radius: 125.0,
+                    lineWidth: 24.0,
+                    percent: percent > 1.0 ? 1.0 : percent,
+                    center: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.water_drop,
+                            size: 40, color: AppColors.primaryBlue),
+                        const SizedBox(height: 8),
+                        Text('${_currentIntake}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 48,
+                                color: AppColors.darkText)),
+                        Text('/ ${_goal} ml',
+                            style: const TextStyle(
+                                fontSize: 16, color: AppColors.lightText)),
+                      ],
+                    ),
+                    circularStrokeCap: CircularStrokeCap.round,
+                    backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                    progressColor: AppColors.primaryBlue,
+                    animation: true,
+                  ),
+                  const SizedBox(height: 40),
+
+                  // 1. The Stats Card
+                  Card(
+                    elevation: 2,
+                    shadowColor: AppColors.primaryBlue.withOpacity(0.2),
+                    // The Card's margin is now handled by the parent Padding
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildStatColumn('Current', '${_currentIntake} ml'),
+                          _buildStatColumn('Goal', '${_goal} ml'),
+                          _buildStatColumn('Remaining', '${remaining} ml'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 2. The Bottle Selector (caravan)
+                  _buildBottleSelector(),
+
+                  const SizedBox(height: 24),
+
+                  // 3. The "Add Proof" button with natural size
+                  ElevatedButton.icon(
+                    onPressed: _logWaterWithProof,
+                    icon: const Icon(Icons.camera_alt_outlined),
+                    label: const Text('Add Proof'),
+                    style: ElevatedButton.styleFrom(
+                        // You can adjust padding to make it look just right
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  const SizedBox(height: 40), // Extra space at the bottom
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildBottleSelector() {
     if (_userId == null) return const SizedBox.shrink();
@@ -394,18 +408,23 @@ Widget build(BuildContext context) {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(
                     child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const BottleInventoryScreen())),
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const BottleInventoryScreen())),
                       child: const Text('Add Your First Bottle'),
                     ),
                   );
                 }
                 final bottles = snapshot.data!;
 
-                if (_selectedBottle == null || !bottles.contains(_selectedBottle)) {
+                if (_selectedBottle == null ||
+                    !bottles.contains(_selectedBottle)) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
-                      setState(() { _selectedBottle = bottles.first; });
+                      setState(() {
+                        _selectedBottle = bottles.first;
+                      });
                     }
                   });
                 }
@@ -420,15 +439,21 @@ Widget build(BuildContext context) {
                       final isSelected = bottle.id == _selectedBottle?.id;
                       return GestureDetector(
                         onTap: () {
-                          setState(() { _selectedBottle = bottle; });
+                          setState(() {
+                            _selectedBottle = bottle;
+                          });
                         },
                         child: Container(
                           width: 120,
                           margin: const EdgeInsets.symmetric(horizontal: 4.0),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.primaryBlue.withOpacity(0.1) : Colors.white,
+                            color: isSelected
+                                ? AppColors.primaryBlue.withOpacity(0.1)
+                                : Colors.white,
                             border: Border.all(
-                              color: isSelected ? AppColors.primaryBlue : Colors.grey.shade300,
+                              color: isSelected
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
                               width: 2,
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -436,8 +461,11 @@ Widget build(BuildContext context) {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(bottle.name, overflow: TextOverflow.ellipsis),
-                              Text('${bottle.capacity} ml', style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(bottle.name,
+                                  overflow: TextOverflow.ellipsis),
+                              Text('${bottle.capacity} ml',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
