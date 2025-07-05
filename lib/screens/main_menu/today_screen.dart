@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hydrogoal/screens/auth/auth_wrapper.dart';
 import 'package:hydrogoal/screens/hydration/hydration_proof_screen.dart';
+import 'package:hydrogoal/screens/profile/profile_screen.dart';
 import 'package:hydrogoal/services/firebase_auth_service.dart';
 import 'package:hydrogoal/services/firestore_service.dart';
 import 'package:hydrogoal/services/notification_service.dart';
@@ -245,14 +245,12 @@ class _TodayScreenState extends State<TodayScreen> {
             onPressed: _showSettingsBottomSheet,
           ),
           IconButton(
-            icon: const Icon(Icons.logout, color: AppColors.darkText),
-            onPressed: () async {
-              await authService.signOut();
-              if (context.mounted)
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => const AuthWrapper()),
-                    (r) => false);
+            icon: const Icon(Icons.account_circle_outlined, color: AppColors.darkText),
+            tooltip: 'Profile',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
             },
           ),
         ],

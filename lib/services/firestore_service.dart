@@ -37,6 +37,44 @@ class FirestoreService {
     return 0;
   }
 
+  Future<AppUser?> getUser(String uid) async {
+    try {
+      final docSnapshot = await _db.collection('users').doc(uid).get();
+
+      if (docSnapshot.exists) {
+        // Use the fromMap factory you added to user_model.dart
+        return AppUser.fromMap(docSnapshot.data()!, docSnapshot.id);
+      }
+    } catch (e) {
+      print('Error fetching user: $e');
+    }
+    // Return null if user isn't found or an error occurs
+    return null;
+  }
+
+  Future<void> updateUsername(String uid, String newUsername) async {
+    try {
+      await _db.collection('users').doc(uid).update({
+        'username': newUsername,
+      });
+    } catch (e) {
+      print('Error updating username: $e');
+      // Optionally re-throw the exception to handle it in the UI
+      rethrow;
+    }
+  }
+
+  Future<void> updatePhotoURL(String uid, String newPhotoURL) async {
+    try {
+      await _db.collection('users').doc(uid).update({
+        'photoURL': newPhotoURL,
+      });
+    } catch (e) {
+      print('Error updating photo URL: $e');
+      rethrow;
+    }
+  }
+
   Stream<QuerySnapshot> getHydrationHistoryForMonth(
       String userId, DateTime month) {
     DateTime startOfMonth = DateTime(month.year, month.month, 1);
@@ -50,4 +88,5 @@ class FirestoreService {
         .where('date', isLessThanOrEqualTo: endOfMonth)
         .snapshots();
   }
+
 }

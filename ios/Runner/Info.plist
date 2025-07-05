@@ -49,5 +49,9 @@
 	<string>This app needs camera access to take a picture as proof of hydration.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photo library access to select a picture as proof of hydration.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to the camera to let you take a new profile picture.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to the photo library to let you choose an existing profile picture.</string>
 </dict>
 </plist>
