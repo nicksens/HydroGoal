@@ -86,13 +86,8 @@ class _TodayScreenState extends State<TodayScreen> {
     double base = _weight * 30;
 
     // Adjust for age (e.g., slightly less needed for older adults)
-
-    if (_age < 30) {
-      base = 1.0;
-    } else if (_age <= 55) {
-      base = 0.9;
-    } else {
-      base = 0.8;
+    if (_age > 55) {
+      base *= 0.9;
     }
 
     // Add amounts for activity and climate
@@ -358,13 +353,6 @@ class _TodayScreenState extends State<TodayScreen> {
                         content: Text(
                             'Daily goal updated to $_recommendedGoal ml!')));
                   },
-                  // Add this 'style' property to make the button larger
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity,
-                        50), // Make it full-width and 50px tall
-                    textStyle: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
                   child: const Text('Apply as My Goal'),
                 ),
               ],
