@@ -11,16 +11,46 @@ class FirestoreService {
   }
 
   Future<void> logWaterIntake(String userId, int amount) async {
-    final String dateId = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final docRef = _db
+    final dateId = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final dayDocRef = _db
         .collection('users')
         .doc(userId)
         .collection('hydration_history')
         .doc(dateId);
-    return docRef.set({
-      'amount': FieldValue.increment(amount),
-      'date': Timestamp.now(),
-    }, SetOptions(merge: true));
+    final logDocRef =
+        dayDocRef.collection('logs').doc(); // New document in a subcollection
+
+    // Use a batched write to perform both operations at once
+    WriteBatch batch = _db.batch();
+
+    // Operation 1: Set the detailed log entry
+    batch.set(logDocRef, {
+      'amount': amount,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // Operation 2: Increment the total for the day
+    batch.set(
+        dayDocRef,
+        {
+          'amount': FieldValue.increment(amount),
+          'date': Timestamp.now(), // Keep this for monthly queries
+        },
+        SetOptions(merge: true));
+
+    await batch.commit();
+  }
+
+  Stream<QuerySnapshot> getLogsForDay(String userId, DateTime day) {
+    final dateId = DateFormat('yyyy-MM-dd').format(day);
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('hydration_history')
+        .doc(dateId)
+        .collection('logs')
+        .orderBy('timestamp', descending: true) // Show newest first
+        .snapshots();
   }
 
   // --- THIS IS THE NEW, MISSING METHOD ---

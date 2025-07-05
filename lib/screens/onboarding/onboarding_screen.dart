@@ -1,29 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hydrogoal/screens/auth/signup_screen.dart';
 import 'package:hydrogoal/utils/colors.dart';
-
-// Reusing the WaveClipper from the login screen for consistency
-class WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 50);
-    var firstControlPoint = Offset(size.width / 4, size.height);
-    var firstEndPoint = Offset(size.width / 2, size.height - 50);
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    var secondControlPoint = Offset(size.width * 3 / 4, size.height - 100);
-    var secondEndPoint = Offset(size.width, size.height - 50);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
+import 'package:liquid_swipe/liquid_swipe.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -33,35 +11,35 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageController = PageController();
   int _currentPage = 0;
+  late LiquidController _liquidController;
 
-  // This function sets a flag and navigates to the main app
-  void _completeOnboarding() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (context) =>
-              const SignUpScreen()), // Or LoginScreen if you prefer
-    );
+  @override
+  void initState() {
+    super.initState();
+    _liquidController = LiquidController();
   }
 
   // Data for our onboarding slides
   final List<Map<String, dynamic>> _onboardingData = [
     {
-      'icon': Icons.track_changes,
+      'color': AppColors.lightBlue.withOpacity(0.3),
+      'icon': Icons.track_changes_outlined,
       'title': 'Track Your Goals',
       'description':
           'Set personalized hydration goals and easily track your daily water intake to stay on top of your health.',
     },
     {
+      'color': AppColors.accentAqua.withOpacity(0.4),
       'icon': Icons.camera_alt_outlined,
       'title': 'Stay Accountable',
       'description':
           'Use our unique "Hydration Proof" feature to verify your water consumption with a quick photo.',
     },
     {
+      'color': AppColors.primaryBlue.withOpacity(0.5),
       'icon': Icons.calendar_today_outlined,
-      'title': 'Build a Habit',
+      'title': 'Build a Lasting Habit',
       'description':
           'View your progress on the calendar, celebrate your streaks, and build a lasting, healthy habit.',
     },
@@ -69,152 +47,161 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // UPDATED: Use List.generate to build pages with animated content
+    final pages = List.generate(
+      _onboardingData.length,
+      (index) => Container(
+        color: _onboardingData[index]['color'],
+        child: AnimatedOpacity(
+          // This is the key: only show content for the current page
+          duration: const Duration(milliseconds: 500),
+          opacity: _currentPage == index ? 1.0 : 0.0,
+          child: _buildPageContent(
+            icon: _onboardingData[index]['icon'],
+            title: _onboardingData[index]['title'],
+            description: _onboardingData[index]['description'],
+          ),
+        ),
+      ),
+    );
+
     return Scaffold(
       body: Stack(
         children: [
-          // Background Wave
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipPath(
-              clipper: WaveClipper(),
-              child: Container(
-                height: 200,
-                color: AppColors.primaryBlue.withOpacity(0.2),
-              ),
-            ),
+          LiquidSwipe(
+            pages: pages,
+            liquidController: _liquidController,
+            onPageChangeCallback: (page) => setState(() => _currentPage = page),
+            slideIconWidget:
+                const Icon(Icons.arrow_back_ios, color: AppColors.primaryBlue),
+            enableLoop: false,
+            waveType: WaveType.liquidReveal,
           ),
-          SafeArea(
+          Padding(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
+                const Expanded(flex: 5, child: SizedBox()), // Spacer
                 Expanded(
-                  flex: 3,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: _onboardingData.length,
-                    onPageChanged: (int page) =>
-                        setState(() => _currentPage = page),
-                    itemBuilder: (_, index) {
-                      return OnboardingPage(
-                        icon: _onboardingData[index]['icon'],
-                        title: _onboardingData[index]['title'],
-                        description: _onboardingData[index]['description'],
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Page Indicator
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            _onboardingData.length,
-                            (index) => AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              height: 10,
-                              width: _currentPage == index ? 30 : 10,
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: _currentPage == index
-                                    ? AppColors.primaryBlue
-                                    : AppColors.lightBlue,
-                              ),
-                            ),
-                          ),
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          pages.length,
+                          (index) => _buildDot(index: index),
                         ),
-                        const SizedBox(height: 40),
-                        // Next/Get Started Button
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_currentPage < _onboardingData.length - 1) {
-                              _pageController.nextPage(
-                                  duration: const Duration(milliseconds: 400),
-                                  curve: Curves.easeInOut);
-                            } else {
-                              _completeOnboarding();
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            backgroundColor: AppColors.primaryBlue,
-                            elevation: 5,
-                          ),
-                          child: Text(
-                            _currentPage < _onboardingData.length - 1
-                                ? 'NEXT'
-                                : 'GET STARTED',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        // Skip Button
-                        TextButton(
-                          onPressed: _completeOnboarding,
-                          child: const Text('SKIP',
-                              style: TextStyle(
-                                  color: AppColors.lightText,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 50),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child:
+                                ScaleTransition(scale: animation, child: child),
+                          );
+                        },
+                        child: _currentPage == pages.length - 1
+                            ? _buildGetStartedButton()
+                            : _buildSkipNextButtons(),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
-}
 
-// A reusable widget for each onboarding page's content
-class OnboardingPage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
+  // --- Helper Widgets (No changes needed here) ---
 
-  const OnboardingPage({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.description,
-  });
+  Widget _buildPageContent(
+      {required IconData icon,
+      required String title,
+      required String description}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(icon, size: 100, color: AppColors.primaryBlue),
+        const SizedBox(height: 40),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppColors.darkText),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: Text(
+            description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 16, color: AppColors.darkText.withOpacity(0.7)),
+          ),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, size: 120, color: AppColors.primaryBlue),
-          const SizedBox(height: 40),
-          Text(title,
-              style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.darkText),
-              textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          Text(description,
-              style: const TextStyle(fontSize: 16, color: AppColors.lightText),
-              textAlign: TextAlign.center),
-        ],
+  Widget _buildDot({required int index}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: 10,
+      width: _currentPage == index ? 30 : 10,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: _currentPage == index ? AppColors.primaryBlue : Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: AppColors.primaryBlue, width: 1.5),
+      ),
+    );
+  }
+
+  Widget _buildSkipNextButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () {
+            _liquidController.animateToPage(
+                page: _onboardingData.length - 1, duration: 700);
+          },
+          child: const Text('SKIP',
+              style: TextStyle(
+                  color: AppColors.darkText, fontWeight: FontWeight.w600)),
+        ),
+        ElevatedButton(
+          onPressed: () => _liquidController.animateToPage(
+              page: _liquidController.currentPage + 1),
+          child: const Text('NEXT'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGetStartedButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+          );
+        },
+        child: const Text('GET STARTED'),
       ),
     );
   }

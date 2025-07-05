@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_animate/flutter_animate.dart'; // NEW: Import the animation package
 import 'package:hydrogoal/services/firebase_auth_service.dart';
 import 'package:hydrogoal/screens/home_screen.dart';
 import 'package:hydrogoal/screens/auth/signup_screen.dart';
@@ -111,7 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty)
                             return 'Please enter an email';
-                          // This is the corrected regular expression
                           if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value))
                             return 'Please enter a valid email address';
                           return null;
@@ -169,7 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                    ],
+                    ]
+                        // This is the animation call for the Login screen
+                        .animate(interval: 100.ms)
+                        .fade(duration: 400.ms)
+                        .slideY(begin: 0.5, curve: Curves.easeOut),
                   ),
                 ),
               ),
