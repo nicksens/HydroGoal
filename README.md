@@ -15,23 +15,28 @@ This project includes a full suite of features from user authentication and data
 
 ### ✨ Key Features
 
-1.  **Animated Onboarding**: A fluid, `liquid_swipe` introduction to the app for a great first impression.
-    ![image](https://github.com/user-attachments/assets/882ed51d-a4ba-47b6-bbe5-014e3314824d)
+1. **Animated Onboarding**: A fluid, `liquid_swipe` introduction to the app for a great first impression.
+
+![image](https://github.com/user-attachments/assets/882ed51d-a4ba-47b6-bbe5-014e3314824d)
 
 
-2.  **Firebase Authentication**: Secure user signup and login using email and password.
-    ![image](https://github.com/user-attachments/assets/907fb154-7f76-4386-aaa2-52ad10ce7f66)
+2. **Firebase Authentication**: Secure user signup and login using email and password.
+
+![image](https://github.com/user-attachments/assets/907fb154-7f76-4386-aaa2-52ad10ce7f66)
 
 
-3.  **Dynamic Dashboard**: A visually appealing home screen with a circular progress meter to track daily water intake.
-    ![image](https://github.com/user-attachments/assets/a2944864-5ee0-4a12-8ef5-927ceb23260f)
+3.   **Dynamic Dashboard**: A visually appealing home screen with a circular progress meter to track daily water intake.
+
+![image](https://github.com/user-attachments/assets/5f903e66-275d-4aed-9faf-57f23dab7f99)
+
 
 
 4.  **AI-Powered Hydration Proof**:
     -   Log water intake by taking a picture of your water bottle.
     -   Uses the Gemini API to verify the image contains a water container.
     -   Analyzes the water level in the bottle to estimate the amount consumed.
-    ![image](https://github.com/user-attachments/assets/6aa611a7-a284-4ff2-a352-be16a63058eb)
+
+![image](https://github.com/user-attachments/assets/6aa611a7-a284-4ff2-a352-be16a63058eb)
 
 5.  **Personalized Goal Calculator**: A detailed drawer menu to calculate a recommended daily goal based on:
     -   Weight
@@ -39,23 +44,28 @@ This project includes a full suite of features from user authentication and data
     -   Gender
     -   Daily Activity Level
     -   Climate
-    ![image](https://github.com/user-attachments/assets/b1cf9d53-e98a-4c43-aeb3-6b503f30ae57)
+    
+![image](https://github.com/user-attachments/assets/b1cf9d53-e98a-4c43-aeb3-6b503f30ae57)
 
 
-6.  **Bottle Inventory**: Users can add, manage, and delete their favorite water bottles with specific capacities.
-    ![image](https://github.com/user-attachments/assets/3fee506d-d4ae-434c-80a8-646a05e80632)
+6. **Bottle Inventory**: Users can add, manage, and delete their favorite water bottles with specific capacities.
+
+![image](https://github.com/user-attachments/assets/3fee506d-d4ae-434c-80a8-646a05e80632)
 
 
 7.  **Calendar History**: A full-featured calendar to review historical intake data, with daily log timestamps.
-    ![image](https://github.com/user-attachments/assets/77a2e7e6-3b47-473c-ba20-a9ce9e8b442a)
+
+![image](https://github.com/user-attachments/assets/77a2e7e6-3b47-473c-ba20-a9ce9e8b442a)
 
 
 8.  **Account Management**: A profile screen showing user details with the ability to upload a profile picture to Firebase Storage.
-    ![image](https://github.com/user-attachments/assets/db82b24c-4184-41a1-b6b2-61d2c3a951ae)
+
+![image](https://github.com/user-attachments/assets/db82b24c-4184-41a1-b6b2-61d2c3a951ae)
 
 
 9.  **Custom Reminders**: Users can set and receive local notifications to remind them to hydrate at custom intervals.
-    ![image](https://github.com/user-attachments/assets/2c3f81cf-8508-4c73-86dd-4f131b17ecd3)
+
+![image](https://github.com/user-attachments/assets/2c3f81cf-8508-4c73-86dd-4f131b17ecd3)
 
 
   
