@@ -294,31 +294,19 @@ Widget build(BuildContext context) {
                   lineWidth: 24.0,
                   percent: percent > 1.0 ? 1.0 : percent,
                   center: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-
                       const Icon(Icons.water_drop,
-
-                          size: 40, color: AppColors.primaryBlue),
-
+                        size: 40, color: AppColors.primaryBlue),
                       const SizedBox(height: 8),
-
                       Text('${_currentIntake}',
-
-                          style: const TextStyle(
-
-                              fontWeight: FontWeight.bold,
-
-                              fontSize: 48,
-
-                              color: AppColors.darkText)),
-
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                            fontSize: 48,
+                            color: AppColors.darkText)),
                       Text('/ ${_goal} ml',
-
-                          style: const TextStyle(
-
-                              fontSize: 16, color: AppColors.lightText)),
+                        style: const TextStyle(
+                          fontSize: 16, color: AppColors.lightText)),
 
                     ],
                   ),
@@ -384,7 +372,7 @@ Widget build(BuildContext context) {
 
     // The main Column now has padding to match the Card's margin
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
           TextButton(

@@ -7,7 +7,11 @@ import 'package:image_picker/image_picker.dart'; // We need this again for mobil
 import 'package:hydrogoal/services/ai_services.dart';
 
 class HydrationProofScreen extends StatefulWidget {
-  const HydrationProofScreen({super.key, required int totalBottleCapacity});
+  // 1. Add this final variable to hold the passed-in capacity
+  final int totalBottleCapacity;
+
+  // 2. Correct the constructor to use the new variable
+  const HydrationProofScreen({super.key, required this.totalBottleCapacity});
 
   @override
   State<HydrationProofScreen> createState() => _HydrationProofScreenState();
@@ -40,6 +44,7 @@ class _HydrationProofScreenState extends State<HydrationProofScreen> {
     if (isDesktop) {
       _initializeCamera();
     }
+    _totalCapacityController.text = widget.totalBottleCapacity.toString();
   }
 
   Future<void> _initializeCamera() async {
