@@ -106,7 +106,7 @@ To get a local copy of the project up and running, follow these steps:
 1. **Clone the repo**:
 
    ```bash
-   git clone https://github.com/your_username/HydroGoal.git
+   git clone https://github.com/nicksens/HydroGoal.git
    ```
 
 2 **Set up Firebase**:
