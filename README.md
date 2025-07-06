@@ -30,7 +30,7 @@ This project includes a full suite of features from user authentication and data
 
 3.  **Dynamic Dashboard**: A visually appealing home screen with a circular progress meter to track daily water intake.
     <br>
-    <img src="https://github.com/user-attachments/assets/a2944864-5ee0-4a12-8ef5-927ceb23260f" alt="Dynamic Dashboard" width="350"/>
+    <img src="https://github.com/user-attachments/assets/d22c9be3-db7d-4d8c-9083-b637785fee90" alt="Dynamic Dashboard" width="350"/>
 
 ---
 
@@ -39,7 +39,7 @@ This project includes a full suite of features from user authentication and data
     -   Uses the Gemini API to verify the image contains a water container.
     -   Analyzes the water level in the bottle to estimate the amount consumed.
     <br>
-    <img src="https://github.com/user-attachments/assets/6aa611a7-a284-4ff2-a352-be16a63058eb" alt="AI Hydration Proof" width="350"/>
+    <img src="https://github.com/user-attachments/assets/cca6bbbf-ab5c-4be7-86b0-132c0c35e4ed" alt="AI Hydration Proof" width="350"/>
 
 ---
 
@@ -50,31 +50,31 @@ This project includes a full suite of features from user authentication and data
     -   Daily Activity Level
     -   Climate
     <br>
-    <img src="https://github.com/user-attachments/assets/b1cf9d53-e98a-4c43-aeb3-6b503f30ae57" alt="Goal Calculator" width="350"/>
+    <img src="https://github.com/user-attachments/assets/ab47bf83-7377-45b3-93c8-48ddac6c9989" alt="Goal Calculator" width="350"/>
 
 ---
 
 6.  **Bottle Inventory**: Users can add, manage, and delete their favorite water bottles with specific capacities.
     <br>
-    <img src="https://github.com/user-attachments/assets/3fee506d-d4ae-434c-80a8-646a05e80632" alt="Bottle Inventory" width="350"/>
+    <img src="https://github.com/user-attachments/assets/b740d945-1b31-432e-9509-7ff5842ef01b" alt="Bottle Inventory" width="350"/>
 
 ---
 
 7.  **Calendar History**: A full-featured calendar to review historical intake data, with daily log timestamps.
     <br>
-    <img src="https://github.com/user-attachments/assets/77a2e7e6-3b47-473c-ba20-a9ce9e8b442a" alt="Calendar History" width="350"/>
+    <img src="https://github.com/user-attachments/assets/91f7b587-477a-43c6-94fc-45b4812c07f8" alt="Calendar History" width="350"/>
 
 ---
 
 8.  **Account Management**: A profile screen showing user details with the ability to upload a profile picture to Firebase Storage.
     <br>
-    <img src="https://github.com/user-attachments/assets/db82b24c-4184-41a1-b6b2-61d2c3a951ae" alt="Account Management" width="350"/>
+    <img src="https://github.com/user-attachments/assets/dd091651-6f24-4f7b-8d43-748f8f9b081b" alt="Account Management" width="350"/>
 
 ---
 
 9.  **Custom Reminders**: Users can set and receive local notifications to remind them to hydrate at custom intervals.
     <br>
-    <img src="https://github.com/user-attachments/assets/2c3f81cf-8508-4c73-86dd-4f131b17ecd3" alt="Custom Reminders" width="350"/>
+    <img src="https://github.com/user-attachments/assets/ed362176-3ce3-4573-852a-1b0599357dcf" alt="Custom Reminders" width="350"/>
 
 
 
