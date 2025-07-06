@@ -15,33 +15,33 @@ This project includes a full suite of features from user authentication and data
 
 ### ✨ Key Features
 
-1. **Animated Onboarding**: A fluid, `liquid_swipe` introduction to the app for a great first impression.
+1.  **Animated Onboarding**: A fluid, `liquid_swipe` introduction to the app for a great first impression.
+    <br>
+    <img src="https://github.com/user-attachments/assets/882ed51d-a4ba-47b6-bbe5-014e3314824d" alt="Animated Onboarding" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 40_9ff3313b](https://github.com/user-attachments/assets/86e2461e-2fe9-48ad-a39c-d0eeaf418a36)
+---
 
+2.  **Firebase Authentication**: Secure user signup and login using email and password.
+    <br>
+    <img src="https://github.com/user-attachments/assets/67a7c6ea-555b-475e-ba98-3fafd1f5d314" alt="Sign Up Screen" width="350"/>
+    <img src="https://github.com/user-attachments/assets/eca0030f-7883-4951-a189-53f73f3a3cb2" alt="Login Screen" width="350"/>
 
+---
 
-2. **Firebase Authentication**: Secure user signup and login using email and password.
+3.  **Dynamic Dashboard**: A visually appealing home screen with a circular progress meter to track daily water intake.
+    <br>
+    <img src="https://github.com/user-attachments/assets/a2944864-5ee0-4a12-8ef5-927ceb23260f" alt="Dynamic Dashboard" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 40_0f885828](https://github.com/user-attachments/assets/67a7c6ea-555b-475e-ba98-3fafd1f5d314) ![image](https://github.com/user-attachments/assets/eca0030f-7883-4951-a189-53f73f3a3cb2)
-
-
-
-
-3.   **Dynamic Dashboard**: A visually appealing home screen with a circular progress meter to track daily water intake.
-
-![WhatsApp Image 2025-07-06 at 10 29 40_04c680f7](https://github.com/user-attachments/assets/22f6fa8c-0e3d-4e83-b773-64da903d49fd)
-
-
-
+---
 
 4.  **AI-Powered Hydration Proof**:
     -   Log water intake by taking a picture of your water bottle.
     -   Uses the Gemini API to verify the image contains a water container.
     -   Analyzes the water level in the bottle to estimate the amount consumed.
+    <br>
+    <img src="https://github.com/user-attachments/assets/6aa611a7-a284-4ff2-a352-be16a63058eb" alt="AI Hydration Proof" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 41_e0862518](https://github.com/user-attachments/assets/e3834206-1831-4a15-93f7-5095873dcb8a)
-
+---
 
 5.  **Personalized Goal Calculator**: A detailed drawer menu to calculate a recommended daily goal based on:
     -   Weight
@@ -49,30 +49,32 @@ This project includes a full suite of features from user authentication and data
     -   Gender
     -   Daily Activity Level
     -   Climate
-    
-![WhatsApp Image 2025-07-06 at 10 29 43_2895b5c0](https://github.com/user-attachments/assets/b8e0bbe9-e001-4d70-97a9-df1cc5fda626)
+    <br>
+    <img src="https://github.com/user-attachments/assets/b1cf9d53-e98a-4c43-aeb3-6b503f30ae57" alt="Goal Calculator" width="350"/>
 
+---
 
-6. **Bottle Inventory**: Users can add, manage, and delete their favorite water bottles with specific capacities.
+6.  **Bottle Inventory**: Users can add, manage, and delete their favorite water bottles with specific capacities.
+    <br>
+    <img src="https://github.com/user-attachments/assets/3fee506d-d4ae-434c-80a8-646a05e80632" alt="Bottle Inventory" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 44_bae18052](https://github.com/user-attachments/assets/f970a70e-f55f-4146-bf72-0c432166065e)
-
+---
 
 7.  **Calendar History**: A full-featured calendar to review historical intake data, with daily log timestamps.
+    <br>
+    <img src="https://github.com/user-attachments/assets/77a2e7e6-3b47-473c-ba20-a9ce9e8b442a" alt="Calendar History" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 47_20fee635](https://github.com/user-attachments/assets/59c9a739-b98d-49f4-99f3-524065d8feaa)
-
-
+---
 
 8.  **Account Management**: A profile screen showing user details with the ability to upload a profile picture to Firebase Storage.
+    <br>
+    <img src="https://github.com/user-attachments/assets/db82b24c-4184-41a1-b6b2-61d2c3a951ae" alt="Account Management" width="350"/>
 
-![WhatsApp Image 2025-07-06 at 10 29 54_3e325a22](https://github.com/user-attachments/assets/45f62232-ea0f-4758-a204-dd982737e3dc)
-
-
+---
 
 9.  **Custom Reminders**: Users can set and receive local notifications to remind them to hydrate at custom intervals.
-
-![WhatsApp Image 2025-07-06 at 10 30 09_05b6bb07](https://github.com/user-attachments/assets/486c9e59-64e4-4d89-b856-4a9d117fd208)
+    <br>
+    <img src="https://github.com/user-attachments/assets/2c3f81cf-8508-4c73-86dd-4f131b17ecd3" alt="Custom Reminders" width="350"/>
 
 
 
