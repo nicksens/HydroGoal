@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e3856de1-5b29-4f83-a945-d6ddf5514eec)
+[![Watch the video](https://img.youtube.com/vi/t7QdXe5TOIE/maxresdefault.jpg)](https://www.youtube.com/watch?v=t7QdXe5TOIE)
 # HydroGoal 💧
 
 HydroGoal is an intelligent hydration tracking app designed to make building a healthy habit of drinking water easy, engaging, and accountable. With AI-powered features, personalized goal calculations, and a beautiful interface, HydroGoal ensures you stay hydrated and on track with your health goals.
