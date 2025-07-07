@@ -3,8 +3,9 @@
 
 ---
 
-Link to video: https://www.youtube.com/watch?v=t7QdXe5TOIE
-Link to proposal: https://docs.google.com/document/d/1mGMDP7fvJj9rW4weAObfHS0axLZX1WTkz7gwEhVqOkk/edit?usp=sharing
+# Link to video: https://www.youtube.com/watch?v=t7QdXe5TOIE
+
+# Link to proposal: https://docs.google.com/document/d/1mGMDP7fvJj9rW4weAObfHS0axLZX1WTkz7gwEhVqOkk/edit?usp=sharing
 
 ---
 
